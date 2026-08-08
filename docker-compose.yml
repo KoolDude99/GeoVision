@@ -1,0 +1,38 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      PYTHON_SERVICE_URL: http://python-service:8000
+      SUPABASE_URL: ${VITE_SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+    depends_on:
+      - python-service
+
+  python-service:
+    build: ./python-service
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_DIR: models/dinov2_supcon/final
+      DEVICE: auto
+      TOP_K: 5
+      MAX_UPLOAD_MB: 10
+    volumes:
+      - ./python-service/models:/app/models:ro
+      - huggingface-cache:/root/.cache/huggingface
+
+volumes:
+  huggingface-cache:
