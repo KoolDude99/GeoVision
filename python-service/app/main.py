@@ -1,5 +1,15 @@
+import os
 from contextlib import asynccontextmanager
 from typing import Annotated
+
+for env_var in (
+    "OMP_NUM_THREADS",
+    "OPENBLAS_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+):
+    os.environ.setdefault(env_var, "1")
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 

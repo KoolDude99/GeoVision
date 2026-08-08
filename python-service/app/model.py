@@ -101,7 +101,10 @@ class DinoV2SupConEncoder:
 
         # Match the notebook call exactly so preprocessing cannot drift.
         self.processor = AutoImageProcessor.from_pretrained(backbone_name)
-        self.backbone = AutoModel.from_pretrained(backbone_name)
+        self.backbone = AutoModel.from_pretrained(
+            backbone_name,
+            low_cpu_mem_usage=True,
+        )
         self.backbone.to(self.device).eval()
         for parameter in self.backbone.parameters():
             parameter.requires_grad = False
