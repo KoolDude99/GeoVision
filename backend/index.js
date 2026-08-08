@@ -17,7 +17,26 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY')
 }
 
-app.use(cors())
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3001',
+  'https://geo-vision-frontend.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS policy: This origin is not allowed.'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json())
 
 const requireAuth = async (req, res, next) => {
@@ -111,6 +130,8 @@ app.use((err, _req, res, next) => {
   return next(err)
 })
 
-app.listen(PORT, () => {
-  console.log(`GeoVision backend listening on port ${PORT}`)
-})
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+module.exports = app;
