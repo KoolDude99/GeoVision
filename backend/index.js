@@ -18,6 +18,7 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 }
 
 const allowedOrigins = [
+  'http://localhost',
   'http://localhost:5173',
   'http://localhost:3001',
   'https://geo-vision-frontend.vercel.app'
